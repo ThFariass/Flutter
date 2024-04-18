@@ -1,0 +1,61 @@
+import 'package:flutter/material.dart';
+import 'task.dart';
+import 'add_task_screen.dart';
+
+class TaskListScreen extends StatefulWidget {
+  @override
+  _TaskListScreenState createState() => _TaskListScreenState();
+}
+
+class _TaskListScreenState extends State<TaskListScreen> {
+  List<Task> tasks = [];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Lista de Tarefas'),
+      ),
+      body: ListView.builder(
+        itemCount: tasks.length,
+        itemBuilder: (context, index) {
+          return Dismissible(
+            key: UniqueKey(),
+            onDismissed: (direction) {
+              setState(() {
+                tasks.removeAt(index);
+              });
+            },
+            background: Container(
+              color: Colors.red,
+              alignment: Alignment.centerRight,
+              padding: EdgeInsets.only(right: 20.0),
+              child: Icon(
+                Icons.delete,
+                color: Colors.white,
+              ),
+            ),
+            child: ListTile(
+              title: Text(tasks[index].title),
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddTaskScreen()),
+          );
+
+          if (result != null) {
+            setState(() {
+              tasks.add(result);
+            });
+          }
+        },
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
