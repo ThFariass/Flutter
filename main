@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'task.dart';
-import 'task_list_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,12 +8,81 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Lista de Tarefas',
+      title: 'Tarefas',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: TaskListScreen(),
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final List<String> _tarefas = [];
+
+  void _adicionarTarefa(String tarefa) {
+    setState(() {
+      _tarefas.add(tarefa);
+    });
+  }
+
+  void _removerTarefa(int index) {
+    setState(() {
+      _tarefas.removeAt(index);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Tarefas'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: _tarefas.length,
+              itemBuilder: (context, index) {
+                return Dismissible(
+                  key: Key(_tarefas[index]),
+                  onDismissed: (direction) {
+                    setState(() {
+                      _tarefas.removeAt(index);
+                    });
+                  },
+                  background: Container(
+                    color: Colors.red,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Icon(Icons.delete),
+                    ),
+                  ),
+                  child: ListTile(
+                    title: Text(_tarefas[index]),
+                  ),
+                );
+              },
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(16),
+            child: TextField(
+              onSubmitted: (value) {
+                _adicionarTarefa(value);
+              },
+              decoration: InputDecoration(
+                hintText: 'Adicionar tarefa',
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
